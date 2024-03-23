@@ -1,0 +1,57 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<section>
+  <article>
+    <h1>Menu item</h1>
+    <span>
+      <a href="{% url 'home' %}">Home</a> / <a href="{% url 'menu' %}">Menu</a>/
+      {{menu_item.name}}
+    </span>
+    <!--Begin row-->
+    <div class="d-flex flex-wrap">
+      <!--Begin col-->
+      <div class="col-md-5 p-2 m-2">
+        <h2>{{ menu_item.name }}</h2>
+        <p>Price: &#8377; {{ menu_item.price }} </p>
+        <p>Category : {{menu_item.category}}</p>
+        <p>Calories : {{ menu_item.calories }}</p>
+        <p>Fat contains : {{ menu_item.fat_content }} gm</p>
+        <p style="color: red">Allergens : {{ menu_item.allergens }}</p>
+
+        <p>
+          Available : {% if menu_item.is_available %}
+          <span style="color: green">Yes</span>
+          {% else %}
+          <span style="color: red">No</span>
+          {% endif %}
+        </p>
+        <p>
+          Special : {% if menu_item.is_special %}
+          <span style="color: green">Yes</span>
+          {% else %}
+          <span style="color: red">No</span>
+          {% endif %}
+        </p>
+        <p>
+          Recommended : {% if menu_item.is_recommended %}
+          <span style="color: green">Yes</span>
+          {% else %}
+          <span style="color: red">No</span>
+          {% endif %}
+        </p>
+
+        <p>More about item : <br />{{ menu_item.menu_item_description }}</p>
+      </div>
+      <!--End col-->
+      <!--Begin col-->
+      <div class="col-md-6 p-2 d-flex justify-content-center align-items-center card">
+        <!-- <img src="{{menu_item.image.url}}" alt="{{ menu_item.name}}" /> -->
+        {% for menu_image in menu_images %}
+        <img src="{{ menu_image.images.url }}" alt="{{ menu_item.name }}">
+        {% endfor %}
+      </div>
+      <!--End col-->
+    </div>
+    <!--End row-->
+  </article>
+</section>
+{% endblock %}

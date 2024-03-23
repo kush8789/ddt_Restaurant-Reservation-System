@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="col-md-12">
+  {% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+    <div {% if message.tags %} class="alert {{ message.tags }}" {% endif %}>
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+<section>
+  <article>
+    <div class="container">
+      <h1 class="text-center mb-4">Make a Reservation</h1>
+      <div class="row">
+        <div class="col-md-5">
+          {% if request.user.is_authenticated %}
+          <p class="text-primary">Welcome, {{ request.user }}</p>
+          {% else %}
+          <p class="text-warning">Please login to make a booking</p>
+          {% endif %}
+          <form method="post" id="form">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="mb-3">
+              <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}
+              <div class="invalid-feedback">
+                {{ field.errors|join:", " }}
+              </div>
+              {% endif %}
+            </div>
+            {% endfor %}
+            <div class="d-flex justify-content-between mt-3">
+              <button type="submit" id="button" class="btn btn-lg btn-primary">Book Now</button>
+              <button type="reset" id="button" class="btn btn-lg btn-danger">Clear</button>
+            </div>
+          </form>
+        </div>
+        <div class="col-md-7">
+          <h2 class="mb-3">Bookings For <span id="today"></span></h2>
+          <div id="bookings"></div>
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
+
+<style>
+  .booking-card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .messages {
+    margin-bottom: 15px;
+  }
+
+  .alert {
+    margin-bottom: 15px;
+    position: relative;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid transparent;
+    border-radius: 0.25rem;
+  }
+
+  .alert.alert-success {
+    color: #155724;
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+  }
+
+  .alert.alert-danger {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+  }
+</style>
+
+<style>
+  .booking-card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+<script>
+  function getBookings() {
+    const dateInput = document.getElementById("reservation_date");
+    let selectedDate = dateInput.value;
+
+    if (!selectedDate) {
+      // If no date is selected, use the current date as the default
+      const currentDate = new Date();
+      selectedDate = `${currentDate.getFullYear()}-${currentDate.getMonth() + 1
+        }-${currentDate.getDate().toString().padStart(2, "0")}`;
+      dateInput.value = selectedDate;
+    }
+
+    document.getElementById("today").innerHTML = selectedDate;
+
+    fetch("{% url 'today_reservation' %}" + "?date=" + selectedDate, { method: "GET" })
+      .then((response) => response.json())
+      .then((data) => {
+        let bookings = "";
+
+        for (let i = 0; i < data.length; i++) {
+          const item = data[i];
+          // console.log(item.fields);
+          // Show all item fields in the bookings section
+          bookings += `<div class = "booking-card">`
+          bookings += `<p>Name : ${item.fields.first_name} ${item.fields.last_name
+            }</p>
+          <p> Email : ${item.fields.email}</p>
+          <p> Phone No. : ${item.fields.phone_number}</p>
+          <p> Reservation date : ${item.fields.reservation_date}</p>
+        <p> Reservation time : ${formatTime(item.fields.reservation_time)}</p>
+        <p> Party size : ${item.fields.party_size}</p>
+        <p> Booked at : ${item.fields.created_at}</p>
+        <p> Booking Id : ${item.fields.bookingId}</p>
+        <p> Booking updated at : ${formatTime(item.fields.updated_at)}</p>
+        <p> Special requests: ${item.fields.special_requests}</p>
+        <p> Booking status: ${item.fields.status}</p>
+        </div>`;
+        }
+
+        if (bookings === "") {
+          bookings = "No bookings";
+        }
+        document.getElementById("bookings").innerHTML = bookings;
+      });
+  }
+
+  getBookings();
+
+  function formatTime(time) {
+    const ampm = time < 12 ? "AM" : "PM";
+    const t = time < 12 ? time : time > 12 ? time - 12 : time;
+    const label = `${t} ${ampm}`;
+    return label;
+  }
+
+  document
+    .getElementById("reservation_date")
+    .addEventListener("change", function () {
+      getBookings();
+    });
+</script>
+{% endblock %}

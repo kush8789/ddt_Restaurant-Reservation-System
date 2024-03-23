@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+  .toogle-button {
+    max-width: 80px;
+  }
+</style>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <h2 class="text-center">User Registration</h2>
+      <form method="post" id="registrationForm">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3">
+          <label class="form-label">{{ field.label_tag }}</label>
+          <div class="input-group">
+            {{ field }}
+            {% if field.name == "password1" or field.name == "password2" %}
+            <button type="button" class="btn btn-sm btn-secondary toogle-button"
+              onclick="togglePassword()">Show</button>
+            {% endif %}
+          </div>
+          {% if field.errors %}
+          <div class="errorMessages">
+            {% for error in field.errors %}
+            <span class="errorMessage text-danger">{{ error }}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+        <div class="d-flex justify-content-between mt-3">
+          <button type="submit" {% if request.user.is_authenticated %} disabled {% endif %}
+            class="btn btn-primary">Register</button>
+          <button type="reset" class="btn btn-danger">Clear</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  function togglePassword() {
+    const password1 = document.getElementById("password1");
+    const password2 = document.getElementById("password2");
+    if (password1.type === "password") {
+      password1.type = "text";
+    } else {
+      password1.type = "password";
+    }
+
+    if (password2.type === "password") {
+      password2.type = "text";
+    } else {
+      password2.type = "password";
+    }
+  };
+</script>
+{% endblock %}

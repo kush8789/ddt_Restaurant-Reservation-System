@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="col-md-12">
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+<h1 class="text-center mb-4">Feedback</h1>
+<div class="container d-flex justify-content-center">
+    {% if user.is_authenticated %}
+    <form method="post" enctype="multipart/form-data" class="col-md-8">
+        {% csrf_token %}
+        {{ feedbackform.as_p }}
+        <div class="mb-3">
+            <label for="feedimage">Upload Images</label>
+            <input type="file" name="images" id="images" class="form-control" multiple>
+        </div>
+        <div class="d-flex">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <button type="reset" class="btn btn-danger">Reset</button>
+        </div>
+    </form>
+    {% else %}
+    <p>Please login to submit feedback.</p>
+    {% endif %}
+</div>
+
+{% endblock %}

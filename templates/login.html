@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+  .toogle-button {
+    max-width: 80px;
+  }
+</style>
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h2 class="card-title text-center">User Login</h2>
+          <form method="post" id="registrationForm">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="mb-3">
+              <label class="form-label">{{ field.label_tag }}</label>
+              <div class="input-group">
+                {{ field }}
+                {% if field.name == "password" %}
+                <button type="button" class="btn btn-sm btn-secondary toogle-button"
+                  onclick="togglePassword()">Show</button>
+                {% endif %}
+              </div>
+              {% if field.errors %}
+              <div class="errorMessages">
+                {% for error in field.errors %}
+                <span class="errorMessage text-danger">{{ error }}</span>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
+            {% endfor %}
+            <div class="d-flex justify-content-between mt-3">
+              <button type="submit" {% if request.user.is_authenticated %} disabled {% endif %}
+                class="btn btn-primary">Login</button>
+              <button type="reset" class="btn btn-danger">Reset</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>
+  function togglePassword() {
+    const passwordInput = document.querySelector('#id_password');
+    if (passwordInput.type === 'password') {
+      passwordInput.type = 'text';
+    } else {
+      passwordInput.type = 'password';
+    }
+  }
+</script>
+{% endblock %}

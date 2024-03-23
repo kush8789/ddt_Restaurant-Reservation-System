@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="about-section mt-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-7">
+        <h1 class="mb-4">About Us</h1>
+        <span class="d-flex p-4">
+          <h3>Current Rating : </h3>
+          <p class="average_rating">{{ average_rating|floatformat:1 }} &#9733;</p>
+        </span>
+      </div>
+      <div class="col-md-5">
+        <figure class="figure">
+          <img src="{% static '' %}" alt="owner" class="img-fluid rounded shadow">
+          <figcaption class="figure-caption mt-2">
+            Restaurant owners
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+
+  </div>
+</section>
+<div class="container mb-5">
+  <h1 class="text-center mb-5">Feedbacks</h1>
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for feedback in feedbacks %}
+    <div class="col">
+      <div class="card h-100">
+        <div class="card-body">
+          <h5 class="card-title">{{ feedback.user.username }}</h5>
+          <p class="card-text">Date: {{ feedback.feed_date }}</p>
+          <div class="d-flex align-items-center mb-3">
+            <p class="mb-0 me-2">Rating:</p>
+            <div class="rating">
+              {{feedback.rating}}
+              &#9733;
+            </div>
+          </div>
+          <p class="card-text">{{ feedback.message }}</p>
+        </div>
+        <div class="carousel slide" data-bs-ride="carousel" id="carousel-{{ feedback.id }}">
+          <div class="carousel-indicators">
+            {% for image in feedback.feedimage_set.all %}
+            <button type="button" data-bs-target="#carousel-{{ feedback.id }}" data-bs-slide-to="{{ forloop.counter0 }}"
+              {% if forloop.first %}class="active" {% endif %}></button>
+            {% endfor %}
+          </div>
+          <div class="carousel-inner">
+            {% for image in feedback.feedimage_set.all %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+              <img src="{{ image.images.url }}" class="d-block w-100 img-carousel" alt="Feedback Image">
+            </div>
+            {% endfor %}
+          </div>
+          <button class="carousel-control-prev" type="button" data-bs-target="#carousel-{{ feedback.id }}"
+            data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#carousel-{{ feedback.id }}"
+            data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <div class="d-flex justify-content-center mt-4">
+    <div class="pagination">
+      <span class="step-links">
+        {% if feedbacks.has_previous %}
+        <a href="?page=1">&laquo; first</a>
+        <a href="?page={{ feedbacks.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current-page">
+          Page {{ feedbacks.number }} of {{ feedbacks.paginator.num_pages }}.
+        </span>
+
+        {% if feedbacks.has_next %}
+        <a href="?page={{ feedbacks.next_page_number }}">next</a>
+        <a href="?page={{ feedbacks.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+      </span>
+    </div>
+  </div>
+</div>
+<div class="column">
+</div>
+<style>
+  .rating {
+    color: #259c07;
+    font-size: 1.2rem;
+    font-weight: bolder
+  }
+
+  .carousel {
+    margin-top: 15px;
+  }
+
+  .carousel-inner {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .carousel-item img {
+    object-fit: cover;
+    height: 300px;
+  }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+  }
+
+  .step-links {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+  }
+
+  .step-links a {
+    padding: 5px;
+    text-decoration: none;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-right: 5px;
+  }
+
+  .current-page {
+    font-weight: bold;
+    margin: 0 10px;
+  }
+
+  .average_rating {
+    background-color: #259c07;
+    border-radius: 100px;
+    padding: 2px;
+    color: blanchedalmond;
+    font-weight: bolder;
+    font-size: 1.5rem;
+  }
+</style>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% load static %}
+
+
+<footer class="footer">
+  <div class="container-fluid p-4">
+
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <h3>Follow Us</h3>
+        <ul class="list-unstyled d-flex">
+          <li class="p-2"><a href="" target="_blank"><i
+                class="fab fa-facebook fa-2x"></i></a></li>
+          <li class="p-2"><a href="" target="_blank"><i
+                class="fab fa-twitter fa-2x"></i></a></li>
+          <li class="p-2"><a href="" target="_blank"><i
+                class="fab fa-instagram fa-2x"></i></a></li>
+          <li class="p-2"><a href="" target="_blank"><i
+                class="fab fa-linkedin fa-2x"></i></a></li>
+          <li class="p-2"><a href="" target="_blank"><i class="fab fa-github fa-2x"></i></a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-md-4 mb-3">
+        <h3>Quick Links</h3>
+        <ul class="list-unstyled d-flex flex-wrap">
+          <li class="p-2"><a href="{% url 'home' %}">Home</a></li>
+          <li class="p-2"><a href="{% url 'about' %}">About Us</a></li>
+          <li class="p-2"><a href="{% url 'menu' %}">Menu</a></li>
+          <li class="p-2"><a href="{% url 'book' %}">Book Table</a></li>
+          <li class="p-2"><a href="{% url 'bookings' %}">Reservation</a></li>
+        </ul>
+      </div>
+      <div class="col-md-4 mb-3">
+        <h3>Contact Us</h3>
+        <p class="float-left">Email: info@Restaurant.com</p>
+        <p>Phone: +91 9451921221</p>
+      </div>
+    </div>
+    <div class="row d-flex">
+      <div class="col-md-2 mb-6">
+        <img src="" alt="Restaurant Logo" class="img-fluid">
+      </div>
+      <div class="col-md-10 mb-6 float-end">
+        <p style="text-align: right;">&copy; 2024 Restaurant. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</footer>

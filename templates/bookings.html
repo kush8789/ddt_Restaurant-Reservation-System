@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="col-md-12">
+  {% if messages %}
+  <div class="messages">
+    {% for message in messages %}
+    <div {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+<section class="py-5">
+  <div class="container">
+    <h1 class="text-center mb-4">Your Reservations</h1>
+    <div class="row">
+      <!-- Upcoming Reservations -->
+      <div class="col-md-6">
+        <h2 class="mb-3">Upcoming Reservations</h2>
+        {% if request.user.is_authenticated %}
+        <div id="upcoming-bookings" class="d-flex flex-wrap"></div>
+        {% else %}
+        <p class="text-primary">Please log in to view your upcoming reservations.</p>
+        {% endif %}
+      </div>
+      <!-- Previous Reservations -->
+      <div class="col-md-6">
+        <h2 class="mb-3">Previous Reservations</h2>
+        {% if request.user.is_authenticated %}
+        <div id="previous-reservations" class="d-flex flex-wrap"></div>
+        {% else %}
+        <p class="text-warning">Please log in to view your previous reservations.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .booking-card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+</style>
+
+
+<script>
+  // Fetch reservations data
+  fetch("{% url 'reservations' %}", {
+    method: "GET"
+  }).then((response) => response.json())
+    .then((data) => {
+      console.log(data);
+      const upcomingBookingsData = document.getElementById("upcoming-bookings");
+      const previousBookingsData = document.getElementById("previous-reservations");
+      let upcomingHtml = "";
+      let previousHtml = "";
+
+      data.upcoming_bookings.forEach((booking) => {
+        upcomingHtml += "<div class='booking-card text-wrap'>";
+        upcomingHtml += `<p> <b> Booking Id: </b> ${booking.bookingId}</p>`;
+        upcomingHtml += `<p> <b> Name: </b>${booking.first_name} ${booking.last_name}</p>`;
+        upcomingHtml += `<p> <b> Email: </b>${booking.email}</p>`;
+        upcomingHtml += `<p> <b> Phone Number: </b>${booking.phone_number}</p>`;
+        upcomingHtml += `<p> <b> Date: </b>${booking.reservation_date}</p>`;
+        upcomingHtml += `<p> <b> Time: </b>${formatTime(booking.reservation_time)}</p>`;
+        upcomingHtml += `<p> <b> Party Size: </b>${booking.party_size}</p>`;
+        upcomingHtml += `<p> <b> Status: </b>${booking.status}</p>`;
+        upcomingHtml += `<p> <b> Special Requests: </b>${booking.special_requests}</p>`;
+        upcomingHtml += `<a href="../feedback/${booking.bookingId}" class="btn btn-sm btn-secondary mx-2">Give Feedback</a>`;
+        upcomingHtml += `<a href="../editbooking/${booking.bookingId}" class="btn btn-sm btn-warning mx-2">Edit</a>`;
+        upcomingHtml += "</div>";
+
+      });
+
+      data.previous_bookings.forEach((booking) => {
+        previousHtml += "<div class='booking-card text-wrap'>";
+        previousHtml += `<p> <b> Booking Id: </b> ${booking.bookingId}</p>`;
+        previousHtml += `<p> <b> Name: </b>${booking.first_name} ${booking.last_name}</p>`;
+        previousHtml += `<p> <b> Email: </b>${booking.email}</p>`;
+        previousHtml += `<p> <b> Phone Number: </b>${booking.phone_number}</p>`;
+        previousHtml += `<p> <b> Date: </b>${booking.reservation_date}</p>`;
+        previousHtml += `<p> <b> Time: </b>${formatTime(booking.reservation_time)}</p>`;
+        previousHtml += `<p> <b> Party Size: </b>${booking.party_size}</p>`;
+        previousHtml += `<p> <b> Status: </b>${booking.status}</p>`;
+        previousHtml += `<p> <b> Special Requests: </b>${booking.special_requests}</p>`;
+        previousHtml += `<a href="../feedback/${booking.bookingId}" class="btn btn-sm btn-secondary">Give Feed</a>`;
+        previousHtml += "</div>";
+      });
+
+      // Set the HTML for upcoming and previous bookings
+      upcomingBookingsData.innerHTML = upcomingHtml || "<p>No upcoming bookings.</p>";
+      previousBookingsData.innerHTML = previousHtml || "<p>No previous bookings.</p>";
+    })
+    .catch((error) => {
+      // Handle any errors that occurred during the fetch
+      console.error("Error fetching bookings data:", error);
+      const upcomingBookingsData = document.getElementById("upcoming-bookings");
+      upcomingBookingsData.innerHTML = "<p>Error fetching bookings data.</p>";
+      const previousBookingsData = document.getElementById("previous-reservations");
+      previousBookingsData.innerHTML = "<p>Error fetching bookings data.</p>";
+    });
+
+  function formatTime(time) {
+    const ampm = time < 12 ? "AM" : "PM";
+    const t = time < 12 ? time : time > 12 ? time - 12 : time;
+    const label = `${t} ${ampm}`;
+    return label;
+  }
+</script>
+{% endblock %}
